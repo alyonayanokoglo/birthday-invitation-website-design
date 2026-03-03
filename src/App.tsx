@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /* ============================================================
-   GOOGLE SHEETS
+   RSVP API (Vercel proxy → Google Sheets)
    ============================================================ */
-const GOOGLE_SHEET_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxrkgL0lJ8620wHxfvq_iYUet7Z1dEa7ZIlK4NMivxBpMrzMGVbptXl4F5q_6A4cCv2/exec";
+const RSVP_API = "/api/rsvp";
 
 /* ============================================================
    TYPES
@@ -220,35 +219,24 @@ export function App() {
   }, [code]);
 
   const submitRsvp = useCallback(
-    (response: "yes" | "no") => {
+    async (response: "yes" | "no") => {
       const name = rsvpName.trim();
       if (!name) {
         setRsvpDone(response);
         return;
       }
 
-      // Способ 1: динамическая форма в body (надёжно с любого домена)
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = GOOGLE_SHEET_SCRIPT_URL;
-      form.target = "rsvp-iframe";
-      form.style.display = "none";
-
-      const nameInput = document.createElement("input");
-      nameInput.name = "name";
-      nameInput.value = name;
-      form.appendChild(nameInput);
-
-      const responseInput = document.createElement("input");
-      responseInput.name = "response";
-      responseInput.value = response;
-      form.appendChild(responseInput);
-
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-
       setRsvpDone(response);
+
+      try {
+        await fetch(RSVP_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, response }),
+        });
+      } catch {
+        // Ошибка не блокирует UI — ответ уже показан
+      }
     },
     [rsvpName]
   );
@@ -379,9 +367,6 @@ export function App() {
           ================================ */}
       {phase === "main" && (
         <div className={`transition-opacity duration-700 ${fadeOut ? "opacity-0" : "opacity-100"}`}>
-          {/* Скрытый iframe для POST в Google Sheets (избегаем перехода со страницы) */}
-          <iframe name="rsvp-iframe" title="RSVP" className="hidden" />
-
           {/* ---- CRIME TAPE TOP ---- */}
           <div className="crime-tape w-[110%] -ml-[5%]" />
 
