@@ -88,7 +88,6 @@ export function App() {
   /* ---------- RSVP ---------- */
   const [rsvpName, setRsvpName] = useState("");
   const [rsvpDone, setRsvpDone] = useState<"none" | "yes" | "no">("none");
-  const rsvpFormRef = useRef<HTMLFormElement>(null);
 
   /* ---------- Secrets ---------- */
   const [uvOn, setUvOn] = useState(false);
@@ -222,14 +221,33 @@ export function App() {
 
   const submitRsvp = useCallback(
     (response: "yes" | "no") => {
-      const form = rsvpFormRef.current;
-      if (form && rsvpName.trim()) {
-        const nameInput = form.querySelector('input[name="name"]') as HTMLInputElement;
-        const responseInput = form.querySelector('input[name="response"]') as HTMLInputElement;
-        if (nameInput) nameInput.value = rsvpName.trim();
-        if (responseInput) responseInput.value = response;
-        form.submit();
+      const name = rsvpName.trim();
+      if (!name) {
+        setRsvpDone(response);
+        return;
       }
+
+      // Способ 1: динамическая форма в body (надёжно с любого домена)
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = GOOGLE_SHEET_SCRIPT_URL;
+      form.target = "rsvp-iframe";
+      form.style.display = "none";
+
+      const nameInput = document.createElement("input");
+      nameInput.name = "name";
+      nameInput.value = name;
+      form.appendChild(nameInput);
+
+      const responseInput = document.createElement("input");
+      responseInput.name = "response";
+      responseInput.value = response;
+      form.appendChild(responseInput);
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+
       setRsvpDone(response);
     },
     [rsvpName]
@@ -361,17 +379,7 @@ export function App() {
           ================================ */}
       {phase === "main" && (
         <div className={`transition-opacity duration-700 ${fadeOut ? "opacity-0" : "opacity-100"}`}>
-          {/* Hidden form for Google Sheets RSVP */}
-          <form
-            ref={rsvpFormRef}
-            action={GOOGLE_SHEET_SCRIPT_URL}
-            method="POST"
-            target="rsvp-iframe"
-            className="hidden"
-          >
-            <input type="text" name="name" defaultValue="" />
-            <input type="text" name="response" defaultValue="" />
-          </form>
+          {/* Скрытый iframe для POST в Google Sheets (избегаем перехода со страницы) */}
           <iframe name="rsvp-iframe" title="RSVP" className="hidden" />
 
           {/* ---- CRIME TAPE TOP ---- */}
