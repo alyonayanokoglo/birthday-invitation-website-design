@@ -349,7 +349,7 @@ export function App() {
               ДЕЛО №27-0903
             </h1>
             <p className="font-mono text-[10px] sm:text-xs text-gray-600 tracking-[0.2em] uppercase">
-              Оперативное подразделение «Новосибирск» • Гриф: Особой важности
+              Оперативное подразделение «Новосибирск» • Гриф: Особо важное
             </p>
 
             {/* Fingerprint watermark */}
@@ -383,7 +383,7 @@ export function App() {
                 <span className="text-white font-bold">27-й год</span> работы в тени.
               </p>
               <p>
-                По данным разведки, агент планирует собрать элитную группу оперативников для проведения спецоперации
+                По данным разведки, агент планирует собрать элитную группу оперативников для проведения операции
                 под кодовым названием{" "}
                 <span className="text-red-400 font-bold">«ДЕНЬ РОЖДЕНИЯ»</span>.
               </p>
@@ -395,14 +395,24 @@ export function App() {
                   className={`redacted ${redactedRevealed ? "revealed" : ""}`}
                   onClick={() => setRedactedRevealed(true)}
                 >
-                  предательство
+                  прогул
                 </span>
                 .
               </p>
               {/* UV hidden message */}
               <div className="uv-hidden text-xs italic font-mono">
-                🔮 Секретная заметка от агента: «Буду рада сюрпризам и подаркам от души... Но это строго между нами!»
-              </div>
+  Секретная заметка от агента: «Буду рада сюрпризам и подаркам от души...
+  Но это строго между нами!»
+  {" "}
+  <a
+    href="https://followish.io/app/wishlists/sna7ufgnaamljo"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="underline hover:text-green-400 transition-colors"
+  >
+    Вишлист
+  </a>
+</div>
             </div>
           </section>
 
@@ -444,7 +454,7 @@ export function App() {
                 <div className="text-gray-500 text-[10px] tracking-[0.2em] mb-1 uppercase">Форма одежды</div>
                 <div className="text-white font-heading text-lg sm:text-xl tracking-wider">ДЕТЕКТИВ В ШТАТСКОМ</div>
                 <div className="text-amber-400 text-xs sm:text-sm mt-1 font-mono">
-                  Базовый стиль: элегантно, загадочно, по-детективному 🕶️
+                  Базовый стиль: элегантно, загадочно, по-детективному 
                 </div>
               </div>
             </div>
