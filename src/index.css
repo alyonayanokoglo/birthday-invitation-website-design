@@ -13,8 +13,7 @@ body {
   background-color: #0a0a0f;
   margin: 0;
   -webkit-font-smoothing: antialiased;
-  font-family: "Golos Text", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-family: "Golos Text" sans-serif;
   background-image:
     linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
