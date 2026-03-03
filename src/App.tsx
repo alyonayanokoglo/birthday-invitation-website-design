@@ -1,11 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /* ============================================================
-   RSVP API (Vercel proxy → Google Sheets)
-   ============================================================ */
-const RSVP_API = "/api/rsvp";
-
-/* ============================================================
    TYPES
    ============================================================ */
 type Phase = "loading" | "intro" | "main";
@@ -83,10 +78,6 @@ export function App() {
   const [unlocked, setUnlocked] = useState(false);
   const [scanning, setScanning] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  /* ---------- RSVP ---------- */
-  const [rsvpName, setRsvpName] = useState("");
-  const [rsvpDone, setRsvpDone] = useState<"none" | "yes" | "no">("none");
 
   /* ---------- Secrets ---------- */
   const [uvOn, setUvOn] = useState(false);
@@ -201,7 +192,7 @@ export function App() {
   const submitCode = useCallback(() => {
     const entered = code.join("");
     if (entered.length < 4) return;
-    if (entered === "2703") {
+    if (entered === "1999") {
       setScanning(true);
       setTimeout(() => {
         setScanning(false);
@@ -217,29 +208,6 @@ export function App() {
       }, 700);
     }
   }, [code]);
-
-  const submitRsvp = useCallback(
-    async (response: "yes" | "no") => {
-      const name = rsvpName.trim();
-      if (!name) {
-        setRsvpDone(response);
-        return;
-      }
-
-      setRsvpDone(response);
-
-      try {
-        await fetch(RSVP_API, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, response }),
-        });
-      } catch {
-        // Ошибка не блокирует UI — ответ уже показан
-      }
-    },
-    [rsvpName]
-  );
 
   /* ============================================================
      RENDER
@@ -450,20 +418,20 @@ export function App() {
               {/* Agent */}
               <div className="detail-card">
                 <div className="text-gray-500 text-[10px] tracking-[0.2em] mb-1 uppercase">Объект</div>
-                <div className="text-white font-heading text-lg sm:text-xl tracking-wider">АЛЕНА ИНКОГНИТО</div>
+                <div className="text-white font-heading text-lg sm:text-xl tracking-wider">АЛЕНА ЯНОКОГЛО</div>
                 <div className="text-amber-400 text-xs sm:text-sm mt-1 font-mono">Кодовое имя: «ИНКОГНИТО»</div>
               </div>
               {/* Age */}
               <div className="detail-card">
                 <div className="text-gray-500 text-[10px] tracking-[0.2em] mb-1 uppercase">Возраст агента</div>
                 <div className="text-white font-heading text-lg sm:text-xl tracking-wider">27 ЛЕТ</div>
-                <div className="text-amber-400 text-xs sm:text-sm mt-1 font-mono">Юбилей оперативной деятельности</div>
+                <div className="text-amber-400 text-xs sm:text-sm mt-1 font-mono">Оперативной деятельности</div>
               </div>
               {/* Date */}
               <div className="detail-card">
                 <div className="text-gray-500 text-[10px] tracking-[0.2em] mb-1 uppercase">Дата операции</div>
-                <div className="text-white font-heading text-lg sm:text-xl tracking-wider">9 МАРТА</div>
-                <div className="text-amber-400 text-xs sm:text-sm mt-1 font-mono">Воскресенье</div>
+                <div className="text-white font-heading text-lg sm:text-xl tracking-wider">9 МАРТА 2026</div>
+                <div className="text-amber-400 text-xs sm:text-sm mt-1 font-mono">Понедельник</div>
               </div>
               {/* Time */}
               <div className="detail-card">
@@ -519,7 +487,7 @@ export function App() {
                         <span className="text-amber-500 font-bold">ПОДСКАЗКА:</span> Код состоит из 4 цифр.
                       </p>
                       <p className="text-gray-500 font-mono text-xs mt-1">
-                        Первые две — возраст агента. Последние две — номер месяца операции.
+                        Год рождения агента.
                       </p>
                     </div>
 
@@ -598,108 +566,27 @@ export function App() {
                   </div>
                   <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
                     <a
-                      href="https://yandex.ru/maps/?text=Новосибирск+ул+Фабричная+10к6+ЛОФТ+ШАЙН"
+                      href="https://2gis.ru/novosibirsk/firm/70000001067308085"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-800 text-amber-400 font-mono text-xs sm:text-sm hover:bg-gray-700 transition-all rounded border border-gray-700"
                     >
-                      📍 Яндекс Карты
+                      📍 2ГИС
                     </a>
                     <a
-                      href="https://2gis.ru/novosibirsk/search/ул+Фабричная+10к6"
+                      href=" https://yandex.ru/maps/?text=Новосибирск+ул+Фабричная+10к6+ЛОФТ+ШАЙН"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-800 text-amber-400 font-mono text-xs sm:text-sm hover:bg-gray-700 transition-all rounded border border-gray-700"
                     >
-                      🗺️ 2ГИС
+                      🗺️ Яндекс Карты
                     </a>
                   </div>
                 </div>
                 {/* UV hidden message */}
                 <div className="uv-hidden text-xs italic font-mono text-center">
-                  🔮 Парковка рядом бесплатная. Но это вы не от меня узнали.
+                  Парковка рядом бесплатная. Но это вы не от меня узнали.
                 </div>
-              </div>
-            )}
-          </section>
-
-          {/* ---- CRIME TAPE DIVIDER ---- */}
-          <div className="crime-tape w-[110%] -ml-[5%] my-2 sm:my-4" />
-
-          {/* ---- RSVP SECTION ---- */}
-          <section className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 animate-slideUp" style={{ animationDelay: "0.6s" }}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="evidence-marker">4</div>
-              <h2 className="font-heading text-xl sm:text-2xl text-amber-500 tracking-[0.15em] uppercase">
-                Подтверждение явки
-              </h2>
-            </div>
-
-            {rsvpDone === "none" ? (
-              <div className="bg-gray-900/40 border border-gray-800/60 rounded-lg p-5 sm:p-6">
-                <p className="text-gray-400 font-mono text-xs sm:text-sm mb-5">
-                  Агент, подтвердите ваше участие в операции. Это важно для планирования.
-                </p>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-gray-500 text-[10px] tracking-[0.2em] uppercase block mb-2">
-                      Ваше кодовое имя (настоящее имя)
-                    </label>
-                    <input
-                      type="text"
-                      value={rsvpName}
-                      onChange={(e) => setRsvpName(e.target.value)}
-                      placeholder="Введите имя..."
-                      className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm placeholder:text-gray-600 focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 outline-none transition-all"
-                    />
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                      onClick={() => submitRsvp("yes")}
-                      disabled={!rsvpName.trim()}
-                      className="flex-1 px-5 py-3 bg-green-600/15 border-2 border-green-600 text-green-400 font-heading text-sm tracking-[0.15em] uppercase hover:bg-green-600/25 active:scale-[0.98] transition-all disabled:opacity-25 disabled:cursor-not-allowed rounded"
-                    >
-                      ✅ Подтверждаю явку
-                    </button>
-                    <button
-                      onClick={() => submitRsvp("no")}
-                      disabled={!rsvpName.trim()}
-                      className="flex-1 px-5 py-3 bg-red-600/10 border-2 border-red-800 text-red-400 font-heading text-sm tracking-[0.15em] uppercase hover:bg-red-600/20 active:scale-[0.98] transition-all disabled:opacity-25 disabled:cursor-not-allowed rounded"
-                    >
-                      ❌ Не смогу
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : rsvpDone === "yes" ? (
-              <div className="bg-gray-900/40 border border-green-500/30 rounded-lg p-5 sm:p-6 text-center animate-fadeInScale">
-                <div className="text-5xl mb-4">🕵️</div>
-                <div className="text-green-400 font-heading text-xl sm:text-2xl mb-2 tracking-wider">
-                  АГЕНТ {rsvpName.toUpperCase()}
-                </div>
-                <div className="text-green-500 font-heading text-lg tracking-wider mb-3">ЗАРЕГИСТРИРОВАН</div>
-                <div className="w-16 h-0.5 bg-green-500/30 mx-auto mb-4" />
-                <p className="text-gray-400 font-mono text-xs sm:text-sm">
-                  Ждём вас на операции 9 марта в 18:00.
-                </p>
-                <p className="text-gray-500 font-mono text-xs mt-1">Не опаздывайте. Время — ключевая улика.</p>
-              </div>
-            ) : (
-              <div className="bg-gray-900/40 border border-red-500/20 rounded-lg p-5 sm:p-6 text-center animate-fadeInScale">
-                <div className="text-5xl mb-4">😔</div>
-                <div className="text-red-400 font-heading text-xl sm:text-2xl mb-2 tracking-wider">
-                  АГЕНТ {rsvpName.toUpperCase()}
-                </div>
-                <p className="text-gray-400 font-mono text-xs sm:text-sm">
-                  Жаль, что не сможете присоединиться к операции.
-                </p>
-                <p className="text-gray-500 font-mono text-xs mt-1">Надеемся на совместные дела в будущем!</p>
-                <button
-                  onClick={() => setRsvpDone("none")}
-                  className="mt-4 text-amber-400 font-mono text-xs underline underline-offset-4 hover:text-amber-300 transition-colors"
-                >
-                  Передумали? Нажмите здесь
-                </button>
               </div>
             )}
           </section>
@@ -707,8 +594,8 @@ export function App() {
           {/* ---- HIDDEN UV SECTION ---- */}
           <section className="max-w-3xl mx-auto px-4 sm:px-6 py-2">
             <div className="uv-hidden text-center text-xs sm:text-sm font-typewriter italic">
-              🔮 Суперсекретное послание: «Лучший подарок — это ваше присутствие, улыбка и хорошее настроение! А если
-              ещё и что-то приятное захватите — агент «ИНКОГНИТО» будет на седьмом небе от счастья!»
+              Суперсекретное послание: «Лучший подарок — это ваше присутствие, улыбка и хорошее настроение! А если подарок не пришел вовремя
+              то просто подарите потом — агент «ИНКОГНИТО» будет на седьмом небе от счастья!»
             </div>
           </section>
 
@@ -757,10 +644,10 @@ export function App() {
                 </div>
               )}
               <p className="text-gray-700 font-mono text-[10px] tracking-wider">
-                ДОКУМЕНТ СОЗДАН ОПЕРАТИВНЫМ ШТАБОМ • 2025
+                ДОКУМЕНТ СОЗДАН ОПЕРАТИВНЫМ ШТАБОМ • 2026
               </p>
               <p className="text-gray-800 font-mono text-[10px] mt-1">
-                Все совпадения случайны. Или нет. 🕵️
+                Все совпадения случайны. Или нет.
               </p>
 
               {/* Easter egg hint */}
